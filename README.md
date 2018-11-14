@@ -1,3 +1,3 @@
 # SIFA
 
-Code coming soon.
+Code is under preparation.
