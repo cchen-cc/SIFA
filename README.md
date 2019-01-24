@@ -8,3 +8,11 @@ AAAI Conference on Artificial Intelligence, 2019 (oral)
 <br/>
 <br/>
 ![](figure/framework.png)
+
+## Train
+* Modify paramter values in `./config_param.json`
+* Run `./main.py` to start the training process
+
+## Note
+* The repository is being updated
+* Contact: Cheng Chen (chencheng236@gmail.com)
