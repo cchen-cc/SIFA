@@ -1,0 +1,1 @@
+./data/training_A/image_01.tfrecords

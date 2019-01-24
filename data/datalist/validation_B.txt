@@ -1,0 +1,1 @@
+./data/validation_B/image_01.tfrecords
