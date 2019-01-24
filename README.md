@@ -9,6 +9,14 @@ AAAI Conference on Artificial Intelligence, 2019 (oral)
 <br/>
 ![](figure/framework.png)
 
+## Installation
+* Install TensorFlow 1.4 and CUDA 8.0
+* Clone this repo
+```
+git clone https://github.com/cchen-cc/SIFA
+cd SIFA
+```
+
 ## Train
 * Modify paramter values in `./config_param.json`
 * Run `./main.py` to start the training process
