@@ -27,7 +27,7 @@ num_cls = 5
 keep_rate_value=0.75
 is_training_value=True
 
-BATCH_SIZE = 
+BATCH_SIZE = 8
 
 class SIFA:
     """The SIFA module."""
