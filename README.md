@@ -3,7 +3,7 @@
 Tensorflow implementation of our unsupervised cross-modality domain adaptation framework
 
 ## Paper
-Synergistic Image and Feature Adaptation: Towards Cross-Modality Domain Adaptation for Medical Image Segmentation
+[Synergistic Image and Feature Adaptation: Towards Cross-Modality Domain Adaptation for Medical Image Segmentation](https://arxiv.org/abs/1901.08211)
 AAAI Conference on Artificial Intelligence, 2019 (oral)
 <br/>
 <br/>
