@@ -36,7 +36,7 @@ def dice(conf_matrix):
     return dic
 
 def dice_eval(compact_pred, labels, n_class):
-    
+
     dice_arr = []
     dice = 0
     eps = 1e-7

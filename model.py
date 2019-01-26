@@ -2,10 +2,13 @@
 
 import tensorflow as tf
 import layers
+import json
 
+with open('./config_param.json') as config_file:
+    config = json.load(config_file)
 
-# The number of samples per batch.
-BATCH_SIZE = 8
+BATCH_SIZE = int(config['batch_size'])
+POOL_SIZE = int(config['pool_size'])
 
 # The height of each image.
 IMG_HEIGHT = 256
@@ -13,8 +16,6 @@ IMG_HEIGHT = 256
 # The width of each image.
 IMG_WIDTH = 256
 
-
-POOL_SIZE = 50
 ngf = 32
 ndf = 64
 
@@ -22,7 +23,6 @@ ndf = 64
 def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
     images_a = inputs['images_a']
     images_b = inputs['images_b']
-
     fake_pool_a = inputs['fake_pool_a']
     fake_pool_b = inputs['fake_pool_b']
 
@@ -60,8 +60,8 @@ def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
 
         prob_cycle_a_is_real, prob_cycle_a_aux_is_real = discriminator_aux(cycle_images_a, "d_A")
 
-        prob_fea_fake_b_is_real = current_discriminator(pred_mask_fake_b, name="d_F")
-        prob_fea_b_is_real = current_discriminator(pred_mask_b, 'd_F')
+        prob_pred_mask_fake_b_is_real = current_discriminator(pred_mask_fake_b, name="d_P")
+        prob_pred_mask_b_is_real = current_discriminator(pred_mask_b, 'd_P')
 
 
     return {
@@ -79,16 +79,10 @@ def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
         'pred_mask_b': pred_mask_b,
         'pred_mask_fake_a': pred_mask_fake_b,
         'pred_mask_fake_b': pred_mask_fake_b,
-        'fea_a': latent_b,
-        'fea_b': latent_b,
-        'fea_fake_a': latent_fake_b,
-        'fea_fake_b': latent_fake_b,
-        'prob_fea_fake_b_is_real': prob_fea_fake_b_is_real,
-        'prob_fea_b_is_real': prob_fea_b_is_real,
-        'prob_real_a_aux': prob_real_a_aux,
+        'prob_pred_mask_fake_b_is_real': prob_pred_mask_fake_b_is_real,
+        'prob_pred_mask_b_is_real': prob_pred_mask_b_is_real,
         'prob_fake_a_aux_is_real': prob_fake_a_aux_is_real,
         'prob_fake_pool_a_aux_is_real': prob_fake_pool_a_aux_is_real,
-        'prob_cycle_a_is_real': prob_cycle_a_is_real,
         'prob_cycle_a_aux_is_real': prob_cycle_a_aux_is_real,
     }
 
@@ -259,7 +253,6 @@ def build_segmenter(inputse, name='segmenter', keep_rate=0.75):
 def discriminator(inputdisc, name="discriminator"):
     with tf.variable_scope(name):
         f = 4
-
         padw = 2
 
         pad_input = tf.pad(inputdisc, [[0, 0], [padw, padw], [padw, padw], [0, 0]], "CONSTANT")

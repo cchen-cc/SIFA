@@ -1,7 +1,10 @@
 import tensorflow as tf
-import numpy as np
+import json
 
-BATCH_SIZE = 8
+with open('./config_param.json') as config_file:
+    config = json.load(config_file)
+
+BATCH_SIZE = int(config['batch_size'])
 
 
 def _decode_samples(image_list, shuffle=False):

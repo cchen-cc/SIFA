@@ -13,9 +13,7 @@ def lrelu(x, leak=0.2, name="lrelu", alt_relu_impl=False):
 
 
 def instance_norm(x):
-
     with tf.variable_scope("instance_norm"):
-
         out = tf.contrib.layers.instance_norm(x)
 
         return out
