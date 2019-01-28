@@ -24,24 +24,26 @@ class SIFA:
         self._target_train_pth = config['target_train_pth']
         self._source_val_pth = config['source_val_pth']
         self._target_val_pth = config['target_val_pth']
-        self._num_cls = int(config['num_cls'])
-        self._pool_size = int(config['pool_size'])
-        self._lambda_a = float(config['_LAMBDA_A'])
-        self._lambda_b = float(config['_LAMBDA_B'])
         self._output_root_dir = config['output_root_dir']
         if not os.path.isdir(self._output_root_dir):
             os.makedirs(self._output_root_dir)
         self._output_dir = os.path.join(self._output_root_dir, current_time)
         self._images_dir = os.path.join(self._output_dir, 'imgs')
         self._num_imgs_to_save = 20
-        self._to_restore = bool(config['to_restore'])
+        self._pool_size = int(config['pool_size'])
+        self._lambda_a = float(config['_LAMBDA_A'])
+        self._lambda_b = float(config['_LAMBDA_B'])
+        self._skip = bool(config['skip'])
+        self._num_cls = int(config['num_cls'])
         self._base_lr = float(config['base_lr'])
         self._max_step = int(config['max_step'])
-        self._checkpoint_dir = config['checkpoint_dir']
-        self._skip = bool(config['skip'])
         self._keep_rate_value = float(config['keep_rate_value'])
         self._is_training_value = bool(config['is_training_value'])
         self._batch_size = int(config['batch_size'])
+        self._lr_gan_decay = bool(config['lr_gan_decay'])
+        self._lsgan_loss_p_scheduler = bool(config['lsgan_loss_p_scheduler'])
+        self._to_restore = bool(config['to_restore'])
+        self._checkpoint_dir = config['checkpoint_dir']
 
         self.fake_images_A = np.zeros(
             (self._pool_size, self._batch_size, model.IMG_HEIGHT, model.IMG_WIDTH, 1))
@@ -318,12 +320,21 @@ class SIFA:
             for epoch in range(sess.run(self.global_step), self._max_step):
                 print("In the epoch ", epoch)
 
-                curr_lr = self._base_lr
+                if self._lr_gan_decay:
+                    if epoch < (self._max_step/2):
+                        curr_lr = self._base_lr
+                    else:
+                        curr_lr = self._base_lr - self._base_lr * (epoch - self._max_step/2) / (self._max_step/2)
+                else:
+                    curr_lr = self._base_lr
 
-                if epoch < 5:
-                    lsgan_loss_p_weight_value = 0.0
-                elif epoch < 7:
-                    lsgan_loss_p_weight_value = 0.1 * (epoch - 4.0) / (7.0 - 4.0)
+                if self._lsgan_loss_p_scheduler:
+                    if epoch < 5:
+                        lsgan_loss_p_weight_value = 0.0
+                    elif epoch < 7:
+                        lsgan_loss_p_weight_value = 0.1 * (epoch - 4.0) / (7.0 - 4.0)
+                    else:
+                        lsgan_loss_p_weight_value = 0.1
                 else:
                     lsgan_loss_p_weight_value = 0.1
 
@@ -481,7 +492,7 @@ class SIFA:
                     writer.flush()
                     self.num_fake_inputs += 1
 
-                    if (cnt+1) % 1 ==0:
+                    if (cnt+1) % save_interval ==0:
                         saver.save(sess, os.path.join(
                             self._output_dir, "sifa"), global_step=cnt)
 
