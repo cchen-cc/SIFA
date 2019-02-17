@@ -9,13 +9,17 @@ BATCH_SIZE = int(config['batch_size'])
 
 def _decode_samples(image_list, shuffle=False):
     decomp_feature = {
-        'dsize_dim0': tf.FixedLenFeature([], tf.int64),
-        'dsize_dim1': tf.FixedLenFeature([], tf.int64),
-        'dsize_dim2': tf.FixedLenFeature([], tf.int64),
-        'lsize_dim0': tf.FixedLenFeature([], tf.int64),
-        'lsize_dim1': tf.FixedLenFeature([], tf.int64),
-        'lsize_dim2': tf.FixedLenFeature([], tf.int64),
+        # image size, dimensions of 3 consecutive slices
+        'dsize_dim0': tf.FixedLenFeature([], tf.int64), # 256
+        'dsize_dim1': tf.FixedLenFeature([], tf.int64), # 256
+        'dsize_dim2': tf.FixedLenFeature([], tf.int64), # 3
+        # label size, dimension of the middle slice
+        'lsize_dim0': tf.FixedLenFeature([], tf.int64), # 256
+        'lsize_dim1': tf.FixedLenFeature([], tf.int64), # 256
+        'lsize_dim2': tf.FixedLenFeature([], tf.int64), # 1
+        # image slices of size [256, 256, 3]
         'data_vol': tf.FixedLenFeature([], tf.string),
+        # label slice of size [256, 256, 1]
         'label_vol': tf.FixedLenFeature([], tf.string)}
 
     raw_size = [256, 256, 3]
