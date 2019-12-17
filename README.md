@@ -41,8 +41,8 @@ If you find the code useful for your research, please cite our paper.
 }
 ```
 
-**Acknowledgement**
-Part of the code is revised from the Tensorflow implementation of [CycleGAN](https://github.com/leehomyc/cyclegan-1).
+## Acknowledgement
+Part of the code is revised from the [Tensorflow implementation of CycleGAN](https://github.com/leehomyc/cyclegan-1).
 
 ## Note
 * The repository is being updated
