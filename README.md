@@ -27,6 +27,22 @@ cd SIFA
 * Modify paramter values in `./config_param.json`
 * Run `./main.py` to start the training process
 
+## Citation
+If you find the code useful for your research, please cite our paper.
+```
+@inproceedings{chen2019synergistic,
+  author    = {Chen, Cheng and Dou, Qi and Chen, Hao and Qin, Jing and Heng, Pheng-Ann},
+  title     = {Synergistic Image and Feature Adaptation: 
+               Towards Cross-Modality Domain Adaptation for Medical Image Segmentation},
+  booktitle = {Proceedings of The Thirty-Third Conference on Artificial Intelligence (AAAI)},
+  pages     = {865--872},
+  year      = {2019},
+}
+```
+
+## Acknowledgement
+Part of the code is revised from the [Tensorflow implementation of CycleGAN](https://github.com/leehomyc/cyclegan-1).
+
 ## Note
 * The repository is being updated
 * Contact: Cheng Chen (chencheng236@gmail.com)
