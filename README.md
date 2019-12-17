@@ -1,8 +1,8 @@
 ## Synergistic Image and Feature Adaptation:<br/> Towards Cross-Modality Domain Adaptation for Medical Image Segmentation
 
-Tensorflow implementation of our unsupervised cross-modality domain adaptation framework<br/>
+Tensorflow implementation of our unsupervised cross-modality domain adaptation framework. <br/>
+Please refer to the branch SIFA-v1 for the exact version of our AAAI paper. <br/>
 This is a updated version with more effective and stable training. 
-Please refer to the branch SIFA-v1 for the version of our AAAI paper. 
 
 ## Paper
 [Synergistic Image and Feature Adaptation: Towards Cross-Modality Domain Adaptation for Medical Image Segmentation](https://arxiv.org/abs/1901.08211)
