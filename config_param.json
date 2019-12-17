@@ -10,12 +10,12 @@
   "skip": 1,
   "num_cls": 5,
   "base_lr":0.0002,
-  "max_step": 20,
-  "keep_rate_value": 0.75,
+  "max_step": 20000,
+  "keep_rate_value": 1.0,
   "is_training_value": 1,
   "batch_size": 8,
   "lr_gan_decay": 0,
-  "lsgan_loss_p_scheduler": 1,
   "to_restore": 0,
   "checkpoint_dir": " "
 }
+

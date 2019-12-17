@@ -33,27 +33,28 @@ def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
         current_decoder = build_decoder
         current_segmenter = build_segmenter
 
-        prob_real_a_is_real, prob_real_a_aux = discriminator_aux(tf.expand_dims(images_a[:, :, :, 1], axis=3), "d_A")
-        prob_real_b_is_real = current_discriminator(tf.expand_dims(images_b[:, :, :, 1], axis=3), "d_B")
+        prob_real_a_is_real, prob_real_a_aux = discriminator_aux(images_a, "d_A")
+        prob_real_b_is_real = current_discriminator(images_b, "d_B")
 
-        fake_images_b = build_generator_resnet_9blocks(images_a, tf.expand_dims(images_a[:, :, :, 1], axis=3), name='g_A', skip=skip)
-        latent_b = current_encoder(images_b, name='e_B', skip=skip, is_training=is_training, keep_rate=keep_rate)
+        fake_images_b = build_generator_resnet_9blocks(images_a, images_a, name='g_A', skip=skip)
+        latent_b, latent_b_ll = current_encoder(images_b, name='e_B', skip=skip, is_training=is_training, keep_rate=keep_rate)
 
-        fake_images_a = current_decoder(latent_b, tf.expand_dims(images_b[:, :, :, 1], axis=3), name='de_B', skip=skip)
+        fake_images_a = current_decoder(latent_b, images_b, name='de_B', skip=skip)
 
         pred_mask_b = current_segmenter(latent_b, name='s_B', keep_rate=keep_rate)
+        pred_mask_b_ll = current_segmenter(latent_b_ll, name='s_B_ll', keep_rate=keep_rate)
 
 
         prob_fake_a_is_real, prob_fake_a_aux_is_real = discriminator_aux(fake_images_a, "d_A")
         prob_fake_b_is_real = current_discriminator(fake_images_b, "d_B")
 
-        latent_fake_b = current_encoder(tf.concat([fake_images_b,fake_images_b,fake_images_b], axis=3), 'e_B', skip=skip, is_training=is_training, keep_rate=keep_rate)
-        cycle_images_b = build_generator_resnet_9blocks(tf.concat([fake_images_a,fake_images_a,fake_images_a], axis=3), fake_images_a, 'g_A', skip=skip)
+        latent_fake_b, latent_fake_b_ll = current_encoder(fake_images_b, 'e_B', skip=skip, is_training=is_training, keep_rate=keep_rate)
+        cycle_images_b = build_generator_resnet_9blocks(fake_images_a, fake_images_a, 'g_A', skip=skip)
 
         cycle_images_a = current_decoder(latent_fake_b, fake_images_b, 'de_B', skip=skip)
 
         pred_mask_fake_b = current_segmenter(latent_fake_b, 's_B', keep_rate=keep_rate)
-
+        pred_mask_fake_b_ll = current_segmenter(latent_fake_b_ll, 's_B_ll', keep_rate=keep_rate)
 
         prob_fake_pool_a_is_real, prob_fake_pool_a_aux_is_real = discriminator_aux(fake_pool_a, "d_A")
         prob_fake_pool_b_is_real = current_discriminator(fake_pool_b, "d_B")
@@ -63,6 +64,8 @@ def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
         prob_pred_mask_fake_b_is_real = current_discriminator(pred_mask_fake_b, name="d_P")
         prob_pred_mask_b_is_real = current_discriminator(pred_mask_b, 'd_P')
 
+        prob_pred_mask_fake_b_ll_is_real = current_discriminator(pred_mask_fake_b_ll, name="d_P_ll")
+        prob_pred_mask_b_ll_is_real = current_discriminator(pred_mask_b_ll, 'd_P_ll')
 
     return {
         'prob_real_a_is_real': prob_real_a_is_real,
@@ -77,10 +80,14 @@ def get_outputs(inputs, skip=False, is_training=True, keep_rate=0.75):
         'fake_images_b': fake_images_b,
         'pred_mask_a': pred_mask_b,
         'pred_mask_b': pred_mask_b,
+        'pred_mask_b_ll': pred_mask_b_ll,
         'pred_mask_fake_a': pred_mask_fake_b,
         'pred_mask_fake_b': pred_mask_fake_b,
+        'pred_mask_fake_b_ll': pred_mask_fake_b_ll,
         'prob_pred_mask_fake_b_is_real': prob_pred_mask_fake_b_is_real,
         'prob_pred_mask_b_is_real': prob_pred_mask_b_is_real,
+        'prob_pred_mask_fake_b_ll_is_real': prob_pred_mask_fake_b_ll_is_real,
+        'prob_pred_mask_b_ll_is_real': prob_pred_mask_b_ll_is_real,
         'prob_fake_a_aux_is_real': prob_fake_a_aux_is_real,
         'prob_fake_pool_a_aux_is_real': prob_fake_pool_a_aux_is_real,
         'prob_cycle_a_aux_is_real': prob_cycle_a_aux_is_real,
@@ -96,6 +103,7 @@ def build_resnet_block(inputres, dim, name="resnet", padding="REFLECT", norm_typ
 
         return tf.nn.relu(out_res + inputres)
 
+
 def build_resnet_block_ins(inputres, dim, name="resnet", padding="REFLECT"):
     with tf.variable_scope(name):
         out_res = tf.pad(inputres, [[0, 0], [1, 1], [1, 1], [0, 0]], padding)
@@ -104,7 +112,6 @@ def build_resnet_block_ins(inputres, dim, name="resnet", padding="REFLECT"):
         out_res = layers.general_conv2d_ga(out_res, dim, 3, 3, 1, 1, 0.02, "VALID", "c2", do_relu=False, norm_type='Ins')
 
         return tf.nn.relu(out_res + inputres)
-
 
 
 def build_resnet_block_ds(inputres, dim_in, dim_out, name="resnet", padding="REFLECT", norm_type=None, is_training=True, keep_rate=0.75):
@@ -129,7 +136,6 @@ def build_drn_block(inputdrn, dim, name="drn", padding="REFLECT", norm_type=None
         out_drn = layers.dilate_conv2d(out_drn, dim, dim, 3, 3, 2, 0.01, "VALID", "c2", do_relu=False, norm_type=norm_type, is_training=is_training, keep_rate=keep_rate)
 
         return tf.nn.relu(out_drn + inputdrn)
-
 
 
 def build_drn_block_ds(inputdrn, dim_in, dim_out, name='drn_ds', padding="REFLECT", norm_type=None, is_training=True, keep_rate=0.75):
@@ -213,7 +219,7 @@ def build_encoder(inputen, name='encoder', skip=False, is_training=True, keep_ra
         o_c3 = layers.general_conv2d(o_c2, fb*32, k1, k1, 1, 1, 0.01, 'SAME', 'c3', norm_type='Batch', is_training=is_training, keep_rate=keep_rate)
 
 
-        return o_c3
+        return o_c3, o_r12
 
 
 def build_decoder(inputde, inputimg, name='decoder', skip=False):
@@ -238,6 +244,7 @@ def build_decoder(inputde, inputimg, name='decoder', skip=False):
             out_gen = tf.nn.tanh(o_c6, "t1")
 
         return out_gen
+
 
 def build_segmenter(inputse, name='segmenter', keep_rate=0.75):
     with tf.variable_scope(name):

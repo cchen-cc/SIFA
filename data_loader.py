@@ -64,6 +64,8 @@ def load_data(source_pth, target_pth, do_shuffle=True):
 
     image_i, image_j, gt_i, gt_j = _load_samples(source_pth, target_pth)
 
+    # For converting the value range to be [-1 1] using the equation 2*[(x-x_min)/(x_max-x_min)]-1.
+    # The values {- 1.7, 4.0, -1.9, 3.0} need to be changed according to the statistics of specific datasets
     if 'mr' in source_pth:
         image_i = tf.subtract(tf.multiply(tf.div(tf.subtract(image_i, -1.7), tf.subtract(4.0, -1.7)), 2.0), 1)
     elif 'ct' in source_pth:
@@ -74,8 +76,6 @@ def load_data(source_pth, target_pth, do_shuffle=True):
     elif 'mr' in target_pth:
         image_j = tf.subtract(tf.multiply(tf.div(tf.subtract(image_j, -1.7), tf.subtract(4.0, -1.7)), 2.0), 1)
 
-    image_i = tf.concat((image_i,image_i,image_i), axis=2)
-    image_j = tf.concat((image_j,image_j,image_j), axis=2)
 
     # Batch
     if do_shuffle is True:
