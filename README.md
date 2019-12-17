@@ -34,7 +34,8 @@ If you find the code useful for your research, please cite our paper.
 ```
 @inproceedings{chen2019synergistic,
   author    = {Chen, Cheng and Dou, Qi and Chen, Hao and Qin, Jing and Heng, Pheng-Ann},
-  title     = {Synergistic Image and Feature Adaptation: Towards Cross-Modality Domain Adaptation for Medical Image Segmentation},
+  title     = {Synergistic Image and Feature Adaptation: 
+  Towards Cross-Modality Domain Adaptation for Medical Image Segmentation},
   booktitle = {Proceedings of The Thirty-Third Conference on Artificial Intelligence (AAAI)},
   pages     = {865--872},
   year      = {2019},
