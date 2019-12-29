@@ -13,7 +13,7 @@ AAAI Conference on Artificial Intelligence, 2019 (oral)
 ![](figure/framework.png)
 
 ## Installation
-* Install TensorFlow 1.0 and CUDA 9.0
+* Install TensorFlow 10.0 and CUDA 9.0
 * Clone this repo
 ```
 git clone https://github.com/cchen-cc/SIFA
