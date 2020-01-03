@@ -29,6 +29,10 @@ cd SIFA
 * Modify paramter values in `./config_param.json`
 * Run `./main.py` to start the training process
 
+## Evaluate
+* Specify the model path and test file path in `./evaluate.py`
+* Run `./evaluate.py` to start the evaluation.
+
 ## Citation
 If you find the code useful for your research, please cite our paper.
 ```
