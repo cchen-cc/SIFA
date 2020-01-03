@@ -11,14 +11,14 @@ from stats_func import *
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
-CHECKPOINT_PATH = ''
-BASE_FID = ''
-TESTFILE_FID = ''
+CHECKPOINT_PATH = '' # model path
+BASE_FID = '' # folder path of test files
+TESTFILE_FID = '' # path of the .txt file storing the test filenames
 KEEP_RATE = 1.0
 IS_TRAINING = False
 BATCH_SIZE = 128
 
-data_size = [256, 256, 1] # original raw input size
+data_size = [256, 256, 1]
 label_size = [256, 256, 1]
 
 contour_map = {
