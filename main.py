@@ -95,7 +95,7 @@ class SIFA:
                 None,
                 model.IMG_WIDTH,
                 model.IMG_HEIGHT,
-                5
+                self._num_cls
             ], name="gt_B") # for validation only, not used during training
 
         self.keep_rate = tf.placeholder(tf.float32, shape=())
