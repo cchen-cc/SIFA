@@ -15,6 +15,7 @@ from stats_func import *
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 save_interval = 300
+evaluation_interval = 10
 random_seed = 1234
 
 
@@ -89,6 +90,13 @@ class SIFA:
                 model.IMG_HEIGHT,
                 self._num_cls
             ], name="gt_A")
+        self.gt_b = tf.placeholder(
+            tf.float32, [
+                None,
+                model.IMG_WIDTH,
+                model.IMG_HEIGHT,
+                5
+            ], name="gt_B") # for validation only, not used during training
 
         self.keep_rate = tf.placeholder(tf.float32, shape=())
         self.is_training = tf.placeholder(tf.bool, shape=())
@@ -136,6 +144,22 @@ class SIFA:
         self.prob_fake_a_aux_is_real = outputs['prob_fake_a_aux_is_real']
         self.prob_fake_pool_a_aux_is_real = outputs['prob_fake_pool_a_aux_is_real']
         self.prob_cycle_a_aux_is_real = outputs['prob_cycle_a_aux_is_real']
+        
+        self.predicter_fake_b = tf.nn.softmax(self.pred_mask_fake_b)
+        self.compact_pred_fake_b = tf.argmax(self.predicter_fake_b, 3)
+        self.compact_y_fake_b = tf.argmax(self.gt_a, 3)
+
+        self.predicter_b = tf.nn.softmax(self.pred_mask_b)
+        self.compact_pred_b = tf.argmax(self.predicter_b, 3)
+        self.compact_y_b = tf.argmax(self.gt_b, 3)
+
+        self.dice_fake_b_arr = dice_eval(self.compact_pred_fake_b, self.gt_a, self._num_cls)
+        self.dice_fake_b_mean = tf.reduce_mean(self.dice_fake_b_arr)
+        self.dice_fake_b_mean_summ = tf.summary.scalar("dice_fake_b", self.dice_fake_b_mean)
+
+        self.dice_b_arr = dice_eval(self.compact_pred_b, self.gt_b, self._num_cls)
+        self.dice_b_mean = tf.reduce_mean(self.dice_b_arr)
+        self.dice_b_mean_summ = tf.summary.scalar("dice_b", self.dice_b_mean)
 
     def compute_losses(self):
 
@@ -482,6 +506,31 @@ class SIFA:
                 self.num_fake_inputs += 1
 
                 print ('iter {}: processing time {}'.format(cnt, time.time() - starttime))
+                
+                # batch evaluation
+                if (i + 1) % evaluation_interval == 0:
+                    summary_str_fake_b, summary_str_b = sess.run([self.dice_fake_b_mean_summ, self.dice_b_mean_summ],
+                                                                 feed_dict={
+                                                                     self.input_a: inputs['images_i'],
+                                                                     self.gt_a: inputs['gts_i'],
+                                                                     self.input_b: inputs['images_j'],
+                                                                     self.gt_b: inputs['gts_j'],
+                                                                     self.is_training: False,
+                                                                     self.keep_rate: 1.0,
+                                                                 })
+                    writer.add_summary(summary_str_fake_b, cnt)
+                    writer.add_summary(summary_str_b, cnt)
+                    writer.flush()
+
+                    summary_str = sess.run(
+                        self.dice_fake_b_mean_summ, feed_dict={
+                            self.input_a: inputs_val['images_i_val'],
+                            self.gt_a: inputs_val['gts_i_val'],
+                            self.is_training: False,
+                            self.keep_rate: 1.0,
+                        })
+                    writer_val.add_summary(summary_str, cnt)
+                    writer_val.flush()
 
                 if (cnt+1) % save_interval ==0:
 
