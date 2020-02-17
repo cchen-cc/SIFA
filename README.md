@@ -42,6 +42,14 @@ If you find the code useful for your research, please cite our paper.
   pages     = {865--872},
   year      = {2019},
 }
+
+@article{chen2020unsupervised,
+  title     = {Unsupervised Bidirectional Cross-Modality Adaptation via 
+               Deeply Synergistic Image and Feature Alignment for Medical Image Segmentation},
+  author    = {Chen, Cheng and Dou, Qi and Chen, Hao and Qin, Jing and Heng, Pheng Ann},
+  journal   = {arXiv preprint arXiv:2002.02255},
+  year      = {2020}
+}
 ```
 
 ## Acknowledgement
