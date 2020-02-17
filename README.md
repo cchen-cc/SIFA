@@ -10,7 +10,9 @@ Please refer to the branch [SIFA-v1](https://github.com/cchen-cc/SIFA/tree/SIFA-
 IEEE Transactions on Medical Imaging
 <br/>
 <br/>
-![](figure/framework.png)
+<p align="center">
+  <img src="figure/framework.png">
+</p>
 
 ## Installation
 * Install TensorFlow 1.10 and CUDA 9.0
@@ -36,6 +38,14 @@ cd SIFA
 ## Citation
 If you find the code useful for your research, please cite our paper.
 ```
+@article{chen2020unsupervised,
+  title     = {Unsupervised Bidirectional Cross-Modality Adaptation via 
+               Deeply Synergistic Image and Feature Alignment for Medical Image Segmentation},
+  author    = {Chen, Cheng and Dou, Qi and Chen, Hao and Qin, Jing and Heng, Pheng Ann},
+  journal   = {arXiv preprint arXiv:2002.02255},
+  year      = {2020}
+}
+
 @inproceedings{chen2019synergistic,
   author    = {Chen, Cheng and Dou, Qi and Chen, Hao and Qin, Jing and Heng, Pheng-Ann},
   title     = {Synergistic Image and Feature Adaptation: 
