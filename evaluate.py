@@ -157,7 +157,7 @@ class SIFA:
 
                 # This is to make the orientation of test data match with the training data
                 # Set to False if the orientation of test data has already been aligned with the training data
-                if True:
+                if False:
                     data = np.flip(data, axis=0)
                     data = np.flip(data, axis=1)
                     label = np.flip(label, axis=0)
