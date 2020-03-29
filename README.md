@@ -19,7 +19,7 @@ cd SIFA
 ```
 
 ## Data Preparation
-* Raw data needs to be written into `tfrecord` format to be decoded by `./data_loader.py`. The pre-processed data has been released from [PnP-AdaNet](https://github.com/carrenD/Medical-Cross-Modality-Domain-Adaptation). 
+* Raw data needs to be written into `tfrecord` format to be decoded by `./data_loader.py`. The pre-processed data has been released from our work [PnP-AdaNet](https://github.com/carrenD/Medical-Cross-Modality-Domain-Adaptation). 
 * Put `tfrecord` data of two domains into corresponding folders under `./data` accordingly.
 * Run `./create_datalist.py` to generate the datalists containing the path of each data.
 
