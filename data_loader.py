@@ -19,12 +19,12 @@ def _decode_samples(image_list, shuffle=False):
         'lsize_dim2': tf.FixedLenFeature([], tf.int64), # 1
         # image slices of size [256, 256, 3]
         'data_vol': tf.FixedLenFeature([], tf.string),
-        # label slice of size [256, 256, 1]
+        # label slice of size [256, 256, 3]
         'label_vol': tf.FixedLenFeature([], tf.string)}
 
     raw_size = [256, 256, 3]
     volume_size = [256, 256, 3]
-    label_size = [256, 256, 1]
+    label_size = [256, 256, 1] # the label has size [256,256,3] in the preprocessed data, but only the middle slice is used
 
     data_queue = tf.train.string_input_producer(image_list, shuffle=shuffle)
     reader = tf.TFRecordReader()
