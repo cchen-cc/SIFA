@@ -28,10 +28,13 @@ cd SIFA
 * Run `./create_datalist.py` to generate the datalists containing the path of each data.
 
 ## Train
+* Modify the data statistics in data_loader.py according to the specifc dataset in use. Note that this is a very important step to correctly convert the data range to [-1, 1] for the network inputs and ensure the performance.
 * Modify paramter values in `./config_param.json`
 * Run `./main.py` to start the training process
 
 ## Evaluate
+* Our trained models can be downloaded from [Dropbox](https://www.dropbox.com/sh/787kmmuhvh3e3yb/AAC4qxBJTWwQ1UMN5psrN96ja?dl=0).
+  Note that the data statistics in evaluate.py need to be changed accordingly as specificed in the script.
 * Specify the model path and test file path in `./evaluate.py`
 * Run `./evaluate.py` to start the evaluation.
 
