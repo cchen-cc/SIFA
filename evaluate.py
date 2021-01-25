@@ -15,6 +15,7 @@ CHECKPOINT_PATH = '' # model path
 BASE_FID = '' # folder path of test files
 TESTFILE_FID = '' # path of the .txt file storing the test filenames
 TEST_MODALITY = 'CT'
+USE_newstat = True
 KEEP_RATE = 1.0
 IS_TRAINING = False
 BATCH_SIZE = 128
@@ -174,7 +175,11 @@ class SIFA:
                         label_batch[idx, ...] = label[..., jj].copy()
                     label_batch = self.label_decomp(label_batch)
                     if TEST_MODALITY=='CT':
-                        data_batch = np.subtract(np.multiply(np.divide(np.subtract(data_batch, -2.8), np.subtract(3.2, -2.8)), 2.0),1) # {-2.8, 3.2} need to be changed according to the data statistics
+                        if USE_newstat:
+                            data_batch = np.subtract(np.multiply(np.divide(np.subtract(data_batch, -2.8), np.subtract(3.2, -2.8)), 2.0),1) # {-2.8, 3.2} need to be changed according to the data statistics
+                        else:
+                            data_batch = np.subtract(np.multiply(np.divide(np.subtract(data_batch, -1.9), np.subtract(3.0, -1.9)), 2.0),1) # {-1.9, 3.0} need to be changed according to the data statistics
+                            
                     elif TEST_MODALITY=='MR':
                         data_batch = np.subtract(np.multiply(np.divide(np.subtract(data_batch, -1.8), np.subtract(4.4, -1.8)), 2.0),1)  # {-1.8, 4.4} need to be changed according to the data statistics
 
